@@ -1,17 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2c6f53"/>
-      <stop offset="100%" stop-color="#1f4838"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a3e635"/>
+      <stop offset="0.52" stop-color="#16a34a"/>
+      <stop offset="1" stop-color="#064e3b"/>
     </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfccb"/>
+      <stop offset="1" stop-color="#86efac"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <g transform="translate(256, 256)">
-    <circle cx="0" cy="0" r="100" fill="none" stroke="#5aa683" stroke-width="8" opacity="0.4"/>
-    <circle cx="0" cy="0" r="72" fill="none" stroke="#8ac4a8" stroke-width="6" opacity="0.3"/>
-    <path d="M 0 -80 C 20 -80, 38 -62, 38 -38 C 38 -14, 20 8, 0 28 C -20 8, -38 -14, -38 -38 C -38 -62, -20 -80, 0 -80 Z" fill="#34d399"/>
-    <circle cx="0" cy="-38" r="10" fill="#1f4838"/>
-    <path d="M -8 -34 L -4 -28 L 8 -42" stroke="#1f4838" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="0" cy="80" r="6" fill="#34d399"/>
-  </g>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <circle cx="256" cy="250" r="174" fill="#052e16" opacity=".14"/>
+  <circle cx="256" cy="250" r="150" fill="none" stroke="#dcfce7" stroke-width="5" opacity=".22"/>
+  <path d="M113 354 C157 395 355 399 402 337" fill="none" stroke="#d9f99d" stroke-width="13" stroke-linecap="round" opacity=".85"/>
+  <path d="M135 150 L135 342 L188 342 L188 238 L321 362 C336 376 360 366 360 346 L360 158 L307 158 L307 263 L174 139 C158 124 135 134 135 150Z" fill="#052e16" opacity=".22" filter="url(#shadow)"/>
+  <path d="M128 145 L128 337 L183 337 L183 231 L317 359 C334 375 361 363 361 340 L361 151 L306 151 L306 258 L172 132 C154 115 128 127 128 145Z" fill="#f0fdf4"/>
+  <path d="M235 274 C238 220 276 180 347 165 C344 231 310 286 254 299 C239 302 229 291 235 274Z" fill="url(#leaf)"/>
+  <path d="M244 286 C271 252 300 222 337 188" fill="none" stroke="#15803d" stroke-width="9" stroke-linecap="round"/>
+  <path d="M370 111 C389 90 419 92 430 113 C441 134 423 160 400 178 C377 159 352 133 370 111Z" fill="#bbf7d0"/>
+  <path d="M400 117 L400 153" stroke="#166534" stroke-width="7" stroke-linecap="round"/>
+  <path d="M385 137 L400 153 L416 135" fill="none" stroke="#166534" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="105" cy="105" r="12" fill="#ecfccb" opacity=".8"/>
+  <circle cx="407" cy="355" r="9" fill="#ecfccb" opacity=".75"/>
 </svg>
