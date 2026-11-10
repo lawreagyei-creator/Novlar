@@ -22,6 +22,10 @@ export function NewRequestScreen({ onBack, onSuccess }: { onBack: () => void; on
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const demoTotal = WASTE_CATEGORIES.filter((cat) => categories.includes(cat.id)).reduce((sum, cat) => sum + cat.demoPrice, 0);
+
+  const formatDemoPrice = (amount: number) => `GH¢${amount.toFixed(2)}`;
+
   const toggleCategory = (id: string) => {
     setCategories((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
   };
@@ -127,6 +131,7 @@ export function NewRequestScreen({ onBack, onSuccess }: { onBack: () => void; on
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-charcoal-800">{cat.label}</p>
                       <p className="text-xs text-charcoal-500">{cat.description}</p>
+                      <p className="text-sm font-semibold text-forest-700 mt-1">{formatDemoPrice(cat.demoPrice)} <span className="text-xs font-normal text-charcoal-400">demo estimate</span></p>
                     </div>
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'border-forest-500 bg-forest-500' : 'border-charcoal-200'}`}>
                       {selected && <Check size={14} className="text-white" />}
@@ -134,6 +139,16 @@ export function NewRequestScreen({ onBack, onSuccess }: { onBack: () => void; on
                   </button>
                 );
               })}
+            </div>
+            <div className="mt-5 rounded-xl border border-accent-200 bg-accent-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-charcoal-800">Estimated total</p>
+                  <p className="text-xs text-charcoal-500">Based on the categories selected</p>
+                </div>
+                <p className="text-xl font-bold text-forest-700">{formatDemoPrice(demoTotal)}</p>
+              </div>
+              <p className="text-xs text-charcoal-500 mt-2">Demo Estimates — Not Final Charges. Actual prices may differ.</p>
             </div>
           </div>
         )}
@@ -243,6 +258,8 @@ export function NewRequestScreen({ onBack, onSuccess }: { onBack: () => void; on
               <h4 className="font-semibold text-charcoal-700 text-sm">Review Your Request</h4>
               <div className="text-sm text-charcoal-600 space-y-1">
                 <p><span className="text-charcoal-400">Categories:</span> {categories.map((c) => WASTE_CATEGORIES.find((w) => w.id === c)?.label).join(', ')}</p>
+                <p><span className="text-charcoal-400">Demo estimate:</span> <strong>{formatDemoPrice(demoTotal)}</strong></p>
+                <p className="text-xs text-charcoal-500">Demo Estimates — Not Final Charges.</p>
                 <p><span className="text-charcoal-400">Location:</span> {locationAddress}</p>
                 <p><span className="text-charcoal-400">Date:</span> {preferredDate}</p>
                 <p><span className="text-charcoal-400">Time:</span> {preferredTime}</p>
