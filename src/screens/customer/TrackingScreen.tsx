@@ -65,6 +65,37 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
     !!request?.collector_id && ['collector_assigned', 'collector_on_the_way', 'collector_arrived'].includes(request.status)
   );
 
+  const [demoProgress, setDemoProgress] = useState(0);
+
+  useEffect(() => {
+    if (request?.location_lat == null || request?.location_lng == null) return;
+    if (collectorLocation?.is_online && !collectorLocation.is_simulated) return;
+    const timer = window.setInterval(() => {
+      setDemoProgress((current) => current >= 1 ? 0 : Math.min(1, current + 0.04));
+    }, 1800);
+    return () => window.clearInterval(timer);
+  }, [request?.location_lat, request?.location_lng, collectorLocation?.is_online, collectorLocation?.is_simulated]);
+
+  const demoCollectorLocation = request?.location_lat != null && request?.location_lng != null
+    ? {
+        collector_id: request.collector_id ?? 'novlar-demo-collector',
+        request_id: request.id,
+        latitude: request.location_lat + 0.003 * (1 - demoProgress),
+        longitude: request.location_lng - 0.003 * (1 - demoProgress),
+        accuracy: null,
+        heading: null,
+        speed: null,
+        is_online: true,
+        is_simulated: true,
+        last_updated: new Date().toISOString(),
+      }
+    : null;
+
+  const activeCollectorLocation = collectorLocation?.is_online
+    ? collectorLocation
+    : demoCollectorLocation;
+
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -86,27 +117,27 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
 
   const markers: { lat: number; lng: number; type: 'customer' | 'collector' | 'pickup'; isLive?: boolean; label?: string }[] = [];
 
-  if (request.location_lat && request.location_lng) {
+  if (request.location_lat != null && request.location_lng != null) {
     markers.push({ lat: request.location_lat, lng: request.location_lng, type: 'pickup', label: request.location_address });
   }
-  if (collectorLocation && collectorLocation.is_online) {
+  if (activeCollectorLocation) {
     markers.push({
-      lat: collectorLocation.latitude,
-      lng: collectorLocation.longitude,
+      lat: activeCollectorLocation.latitude,
+      lng: activeCollectorLocation.longitude,
       type: 'collector',
-      isLive: !collectorLocation.is_simulated,
-      label: collector ? collector.full_name : 'Collector',
+      isLive: !activeCollectorLocation.is_simulated,
+      label: collector ? collector.full_name : 'NOVLAR Demo Collector',
     });
   }
 
   const distance =
-    collectorLocation && request.location_lat && request.location_lng
-      ? calculateDistance(collectorLocation.latitude, collectorLocation.longitude, request.location_lat, request.location_lng)
+    activeCollectorLocation && request.location_lat != null && request.location_lng != null
+      ? calculateDistance(activeCollectorLocation.latitude, activeCollectorLocation.longitude, request.location_lat, request.location_lng)
       : null;
 
   const eta = distance != null ? estimateArrival(distance) : null;
-  const mapCenter = collectorLocation
-    ? { lat: collectorLocation.latitude, lng: collectorLocation.longitude }
+  const mapCenter = activeCollectorLocation
+    ? { lat: activeCollectorLocation.latitude, lng: activeCollectorLocation.longitude }
     : request.location_lat && request.location_lng
     ? { lat: request.location_lat, lng: request.location_lng }
     : undefined;
@@ -125,10 +156,10 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
             </Badge>
             <p className="text-xs text-charcoal-400 mt-1">{request.location_address}</p>
           </div>
-          {collectorLocation?.is_simulated && (
+          {activeCollectorLocation?.is_simulated && (
             <Badge className="bg-warning-100 text-warning-700">Simulated GPS</Badge>
           )}
-          {collectorLocation && !collectorLocation.is_simulated && collectorLocation.is_online && (
+          {activeCollectorLocation && !activeCollectorLocation.is_simulated && activeCollectorLocation.is_online && (
             <Badge className="bg-emerald-100 text-emerald-700">Live GPS</Badge>
           )}
         </div>
@@ -154,27 +185,22 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
         )}
       </div>
 
-      {collector && (
+      {(collector || activeCollectorLocation) && (
         <div className="card mb-4">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-forest-100 flex items-center justify-center text-forest-700 font-bold text-lg">
-              {collector.full_name.charAt(0)}
+              {collector?.full_name.charAt(0) ?? 'D'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-charcoal-800">{collector.full_name}</p>
-              <p className="text-sm text-charcoal-500">Your Waste Collector</p>
+              <p className="font-semibold text-charcoal-800">{collector?.full_name ?? 'NOVLAR Demo Collector'}</p>
+              <p className="text-sm text-charcoal-500">{collector ? 'Your Waste Collector' : 'Simulated route for presentation — not live GPS'}</p>
             </div>
-            <div className="flex gap-2">
-              <a
-                href={`tel:${collector.phone ?? ''}`}
-                className="w-10 h-10 rounded-xl bg-forest-50 flex items-center justify-center text-forest-700 hover:bg-forest-100 transition-colors"
-              >
-                <Phone size={18} />
-              </a>
-              <button className="w-10 h-10 rounded-xl bg-forest-50 flex items-center justify-center text-forest-700 hover:bg-forest-100 transition-colors">
-                <MessageSquare size={18} />
-              </button>
-            </div>
+            {collector && (
+              <div className="flex gap-2">
+                <a href={`tel:${collector.phone ?? ''}`} className="w-10 h-10 rounded-xl bg-forest-50 flex items-center justify-center text-forest-700 hover:bg-forest-100 transition-colors"><Phone size={18} /></a>
+                <button className="w-10 h-10 rounded-xl bg-forest-50 flex items-center justify-center text-forest-700 hover:bg-forest-100 transition-colors"><MessageSquare size={18} /></button>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-3 pt-3 border-t border-forest-50">
@@ -194,18 +220,18 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
               <Navigation size={16} className="text-forest-500 mx-auto mb-1" />
               <p className="text-xs text-charcoal-400">Last Update</p>
               <p className="text-sm font-bold text-charcoal-800">
-                {collectorLocation ? timeAgo(collectorLocation.last_updated) : '—'}
+                {activeCollectorLocation ? timeAgo(activeCollectorLocation.last_updated) : '—'}
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {!collector && (
+      {!collector && !activeCollectorLocation && (
         <div className="card text-center py-8">
           <Truck size={36} className="text-forest-300 mx-auto mb-3" />
-          <p className="font-semibold text-charcoal-700">Awaiting collector assignment</p>
-          <p className="text-sm text-charcoal-500 mt-1">You'll be notified once a collector is assigned to your request.</p>
+          <p className="font-semibold text-charcoal-700">Tracking preview unavailable</p>
+          <p className="text-sm text-charcoal-500 mt-1">Add a pickup location to this request to display the demo route.</p>
         </div>
       )}
     </div>
