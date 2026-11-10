@@ -64,14 +64,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile]);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const normalizedEmail = email.trim().toLowerCase();
+    const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
     return { error: error?.message ?? null };
   }, []);
 
   const signUp = useCallback(
     async (email: string, password: string, fullName: string, phone: string, role: UserRole) => {
+      const normalizedEmail = email.trim().toLowerCase();
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
           data: { full_name: fullName, phone, role },
