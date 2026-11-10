@@ -1,0 +1,18 @@
+{
+  "name": "NOVLAR — Waste Collection, Without the Stress",
+  "short_name": "NOVLAR",
+  "description": "Smart waste management for university campuses and communities.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f0f7f4",
+  "theme_color": "#1f4838",
+  "icons": [
+    {
+      "src": "/novlar-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
