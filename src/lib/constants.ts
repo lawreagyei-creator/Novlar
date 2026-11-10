@@ -1,11 +1,11 @@
 import type { CollectionStatus } from '@/types';
 
 export const WASTE_CATEGORIES = [
-  { id: 'general', label: 'General Waste', icon: 'Trash2', description: 'Non-recyclable household waste' },
-  { id: 'plastic', label: 'Plastic Waste', icon: 'Recycle', description: 'Bottles, containers, packaging' },
-  { id: 'paper', label: 'Paper & Cardboard', icon: 'FileText', description: 'Newspapers, boxes, office paper' },
-  { id: 'organic', label: 'Organic Waste', icon: 'Leaf', description: 'Food scraps, garden waste' },
-  { id: 'recyclable', label: 'Recyclable Materials', icon: 'RotateCw', description: 'Glass, metal, electronics' },
+  { id: 'general', label: 'General Waste', icon: 'Trash2', description: 'Non-recyclable household waste', demoPrice: 25 },
+  { id: 'plastic', label: 'Plastic Waste', icon: 'Recycle', description: 'Bottles, containers, packaging', demoPrice: 20 },
+  { id: 'paper', label: 'Paper & Cardboard', icon: 'FileText', description: 'Newspapers, boxes, office paper', demoPrice: 15 },
+  { id: 'organic', label: 'Organic Waste', icon: 'Leaf', description: 'Food scraps, garden waste', demoPrice: 25 },
+  { id: 'recyclable', label: 'Recyclable Materials', icon: 'RotateCw', description: 'Glass, metal, electronics', demoPrice: 20 },
 ] as const;
 
 export const STATUS_LABELS: Record<CollectionStatus, string> = {
