@@ -89,7 +89,7 @@ function CustomerApp() {
       )}
       {section === 'history' && <CustomerHistory onTrack={(id) => setTrackingId(id)} />}
       {section === 'learn' && <EducationalContent />}
-      {section === 'notifications' && <NotificationsScreen />}
+      {section === 'notifications' && <NotificationsScreen onBack={() => setSection('dashboard')} />}
       {section === 'settings' && <SettingsScreen />}
     </AppShell>
   );
@@ -116,7 +116,7 @@ function CollectorApp() {
     >
       {section === 'dashboard' && <CollectorDashboard />}
       {section === 'learn' && <EducationalContent />}
-      {section === 'notifications' && <NotificationsScreen />}
+      {section === 'notifications' && <NotificationsScreen onBack={() => setSection('dashboard')} />}
       {section === 'settings' && <SettingsScreen />}
     </AppShell>
   );
@@ -143,7 +143,7 @@ function AdminApp() {
     >
       {section === 'dashboard' && <AdminDashboard />}
       {section === 'learn' && <EducationalContent />}
-      {section === 'notifications' && <NotificationsScreen />}
+      {section === 'notifications' && <NotificationsScreen onBack={() => setSection('dashboard')} />}
       {section === 'settings' && <SettingsScreen />}
     </AppShell>
   );
