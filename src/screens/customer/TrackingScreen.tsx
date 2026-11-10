@@ -172,7 +172,7 @@ export function TrackingScreen({ requestId, onBack }: { requestId: string; onBac
           center={mapCenter}
           zoom={15}
           showRoute={markers.length >= 2}
-          followCollector={!!collectorLocation}
+          followCollector={!!activeCollectorLocation}
           className="h-full"
         />
         {markers.length === 0 && (
