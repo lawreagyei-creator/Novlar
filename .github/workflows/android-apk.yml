@@ -1,3 +1,4 @@
+# Android demo APK build. Runs on pushes to main or manual dispatch.
 name: Build NOVLAR Android APK
 
 on:
