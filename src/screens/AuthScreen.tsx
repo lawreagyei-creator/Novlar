@@ -27,10 +27,12 @@ export default function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setLoading(true);
     if (mode === 'login') {
       const { error } = await signIn(email, password);
@@ -42,7 +44,13 @@ export default function AuthScreen() {
         return;
       }
       const { error } = await signUp(email, password, fullName, phone, role);
-      if (error) setError(error);
+      if (error) {
+        setError(error);
+      } else {
+        setMode('login');
+        setPassword('');
+        setSuccess('Account created successfully. If email confirmation is enabled, check your inbox and confirm your email before signing in.');
+      }
     }
     setLoading(false);
   };
@@ -181,6 +189,12 @@ export default function AuthScreen() {
           </div>
         </div>
 
+        {success && (
+          <div className="rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3 text-sm text-emerald-800 animate-slide-down">
+            {success}
+          </div>
+        )}
+
         {error && (
           <div className="rounded-xl bg-error-50 border border-error-100 px-4 py-3 text-sm text-error-700 animate-slide-down">
             {error}
@@ -202,6 +216,7 @@ export default function AuthScreen() {
           onClick={() => {
             setMode(mode === 'login' ? 'signup' : 'login');
             setError(null);
+            setSuccess(null);
           }}
           className="text-sm text-forest-600 hover:text-forest-700 font-medium"
         >
