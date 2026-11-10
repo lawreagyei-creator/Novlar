@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Install Capacitor build tooling
-        run: npm install --no-save --package-lock=false @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
+        run: npm install --no-save --package-lock=false @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7 @capacitor/assets
 
       - name: Build web application
         run: npm run build
@@ -40,6 +40,12 @@ jobs:
 
       - name: Add Android platform
         run: npx cap add android
+
+      - name: Generate NOVLAR Android app icon
+        run: |
+          mkdir -p assets
+          cp public/novlar-icon.svg assets/icon.svg
+          npx @capacitor/assets generate --android --assetPath assets --iconBackgroundColor '#064e3b' --splashBackgroundColor '#f0fdf4'
 
       - name: Sync Android project
         run: npx cap sync android
