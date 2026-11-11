@@ -1,10 +1,11 @@
-import { ArrowLeft, Bell, CheckCheck, BellOff, Truck, CalendarCheck, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { ArrowLeft, Bell, CheckCheck, BellOff, Truck, CalendarCheck, CheckCircle2 } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/ui';
 import { timeAgo } from '@/lib/requests';
 
-export function NotificationsScreen({ onBack }: { onBack: () => void }) {
+function NotificationsContent({ onBack }: { onBack: () => void }) {
   const { profile } = useAuth();
   const { notifications, unreadCount, loading, error, markAsRead, markAllAsRead } = useNotifications(profile?.id);
   const demoItems = [
@@ -85,5 +86,51 @@ export function NotificationsScreen({ onBack }: { onBack: () => void }) {
         </>
       )}
     </div>
+  );
+}
+
+
+interface NotificationsBoundaryProps {
+  children: ReactNode;
+  onBack: () => void;
+}
+
+interface NotificationsBoundaryState {
+  error: Error | null;
+}
+
+class NotificationsErrorBoundary extends Component<NotificationsBoundaryProps, NotificationsBoundaryState> {
+  state: NotificationsBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: Error): NotificationsBoundaryState {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('NOVLAR Notifications screen crashed:', error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="min-h-[60vh] rounded-2xl border border-amber-200 bg-white p-5">
+          <button onClick={this.props.onBack} className="inline-flex items-center gap-2 text-sm font-semibold text-forest-700 mb-5">
+            <ArrowLeft size={18} /> Back to Dashboard
+          </button>
+          <h2 className="text-lg font-bold text-charcoal-800">Notifications could not open</h2>
+          <p className="text-sm text-charcoal-600 mt-2">The app encountered an error while displaying this screen. Your other NOVLAR sections should remain available.</p>
+          <p className="text-xs text-charcoal-500 mt-3 break-words">Technical detail: {this.state.error.message || 'Unknown rendering error'}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export function NotificationsScreen({ onBack }: { onBack: () => void }) {
+  return (
+    <NotificationsErrorBoundary onBack={onBack}>
+      <NotificationsContent onBack={onBack} />
+    </NotificationsErrorBoundary>
   );
 }
