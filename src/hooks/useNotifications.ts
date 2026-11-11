@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Notification } from '@/types';
 
+// Supabase channel removal is asynchronous. A unique topic prevents a quick
+// remount from reusing a channel that is still subscribed during cleanup.
+let notificationChannelSequence = 0;
+
 export function useNotifications(userId: string | null | undefined) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -50,8 +54,9 @@ export function useNotifications(userId: string | null | undefined) {
 
     fetchNotifications();
 
+    const channelTopic = `notifications-${userId}-${++notificationChannelSequence}`;
     const channel = supabase
-      .channel(`notifications-${userId}`)
+      .channel(channelTopic)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
